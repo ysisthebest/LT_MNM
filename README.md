@@ -1,210 +1,296 @@
 # Plugin Quản lý Cán bộ (WordPress + PHP)
 
-**Đề tài:** Sử dụng phần mềm WordPress và ngôn ngữ PHP xây dựng chức hệ thống quản lý cán bộ
-
-| Thành viên | MSSV | Phân công công việc |
-|------------|------|---------------------|
-| **Nguyễn Thanh Tịnh** | 23810310439 | Cài đặt XAMPP, WordPress, plugin, kiểm tra tạo bảng dữ liệu và chạy demo hệ thống |
-| **Ngô Xuân Trường** | 23810310345 | Phụ trách viết báo cáo phần CRUD cán bộ, tìm kiếm, lọc dữ liệu, import CSV và mô tả cơ sở dữ liệu |
-| **Nguyễn Hoàng Việt** | 23810310438 | Phụ trách viết báo cáo phần phân quyền, thống kê, báo cáo, nhật ký thao tác và chuẩn bị ảnh minh họa giao diện |
-
 **Báo cáo môn Lập trình phần mềm mã nguồn mở**
 
-Plugin chạy trên **WordPress** (cài bằng **XAMPP** trên Windows). Đọc file này **từ đầu đến cuối** nếu chưa từng cài — làm đúng thứ tự.
+**Đề tài:** Sử dụng phần mềm WordPress và ngôn ngữ PHP xây dựng chức năng cập nhật và tìm kiếm cán bộ
+
+| STT | Thành viên | MSSV | Phân công công việc |
+|---|---|---|---|
+| 1 | **Nguyễn Thanh Tịnh** | 23810310439 | Cài đặt XAMPP, WordPress, plugin; kiểm tra tạo bảng dữ liệu; chạy demo hệ thống |
+| 2 | **Ngô Xuân Trường** | 23810310345 | Viết báo cáo phần CRUD cán bộ, tìm kiếm, lọc dữ liệu, import CSV và mô tả cơ sở dữ liệu |
+| 3 | **Nguyễn Hoàng Việt** | 23810310438 | Viết báo cáo phần phân quyền, thống kê, báo cáo, nhật ký thao tác và chuẩn bị ảnh minh họa giao diện |
+
+Plugin chạy trên **WordPress** (cài bằng **XAMPP** trên Windows). Nếu chưa từng cài hoặc chạy project, nên đọc file này theo đúng thứ tự từ trên xuống dưới.
 
 ---
 
 ## 1. Cần cài gì trên máy?
 
 | Phần mềm | Dùng để làm gì | Link tải |
-|----------|-----------------|----------|
-| **XAMPP** | Chạy Apache (web) + MySQL (database) | https://www.apachefriends.org/ |
-| **WordPress** | Hệ thống web (đã có trong project hoặc tải thêm) | https://vi.wordpress.org/download/ |
+|---|---|---|
+| **XAMPP** | Chạy Apache, MySQL, PHP | https://www.apachefriends.org/ |
+| **WordPress** | Nền tảng website để cài plugin | https://vi.wordpress.org/download/ |
 
-**Không cần** cài PHP riêng — XAMPP đã có sẵn.
+**Không cần** cài PHP riêng vì XAMPP đã có sẵn.
 
 ---
 
-## 2. Bật XAMPP (làm mỗi lần mở máy làm bài)
+## 2. Bật XAMPP
 
 1. Mở **XAMPP Control Panel**.
-2. Bấm **Start** ở dòng **Apache** → chờ chuyển xanh.
-3. Bấm **Start** ở dòng **MySQL** → chờ chuyển xanh.
+2. Nhấn **Start** ở dòng **Apache**.
+3. Nhấn **Start** ở dòng **MySQL**.
+4. Kiểm tra cả hai dịch vụ đều chuyển sang màu xanh.
 
-Nếu Apache/MySQL báo lỗi (port 80 hoặc 3306 bị chiếm): tắt Skype, tắt ứng dụng web khác, hoặc hỏi nhóm trưởng.
+Nếu Apache hoặc MySQL báo lỗi cổng:
+- Tắt các ứng dụng đang chiếm cổng 80 hoặc 3306.
+- Kiểm tra lại cấu hình XAMPP.
 
 ---
 
-## 3. Lấy code plugin về máy (cả nhóm)
+## 3. Lấy code plugin về máy
 
-### Cách A — Copy từ USB / Zalo / Google Drive (dễ nhất)
+### Cách 1: Copy thư mục plugin
 
-1. Người có project đẩy đủ **nén (zip)** cả thư mục `quanlicb`.
-2. Mỗi người giải nén vào đúng chỗ:
+Sao chép thư mục plugin vào đúng đường dẫn:
 
-```
+```text
 C:\xampp\htdocs\wordpress\wp-content\plugins\quanlicb\
 ```
 
-**Quan trọng:** Trong `plugins` phải thấy file `quanlicb.php`, không phải `plugins\quanlicb\quanlicb\quanlicb.php` (lồng 2 lần là sai).
+Kiểm tra trong thư mục `quanlicb` phải có file:
 
-Cấu trúc đúng:
-
-```
-C:\xampp\htdocs\wordpress\
-+-- wp-admin\
-+-- wp-config.php
-+-- wp-content\
-    +-- plugins\
-        +-- quanlicb\          ← thư mục plugin
-            +-- quanlicb.php   ← file chính
-            +-- sql\
-            +-- includes\
-            +-- admin\
-            +-- assets\
+```text
+quanlicb.php
 ```
 
-### Cách B — Clone Git (nếu nhóm dùng GitHub)
+### Cách 2: Clone bằng Git
 
 ```bash
 cd C:\xampp\htdocs\wordpress\wp-content\plugins
-git clone <link-repo-cua-nhom> quanlicb
+git clone https://github.com/ysisthebest/LT_MNM.git quanlicb
 ```
 
 ---
 
-## 4. Tạo bảng dữ liệu `tblCanBo` (phpMyAdmin)
+## 4. Tạo cơ sở dữ liệu và bảng dữ liệu
 
-**Ai làm một lần** (hoặc mỗi người làm trên máy mình) — chọn **một** trong hai cách:
+### Tạo database WordPress
 
-### Cách 1 — Chạy file SQL (khuyến dùng, dễ kiểm tra)
+1. Mở `http://localhost/phpmyadmin`
+2. Tạo database tên `wordpress`
+3. Giữ mã hóa mặc định hoặc chọn `utf8mb4`
 
-1. Mở **http://localhost/phpmyadmin**
-2. Bên trái bấm database **`wordpress`**
-3. Tab **SQL**
-4. Mở file trong project: `quanlicb\sql\tblCanBo.sql`
-5. **Ctrl+A** → **Ctrl+C** → dán vào ô SQL → **Go** / **Thực hiện**
-6. Thành công khi bên trái thấy bảng **`wp_tblCanBo`** (có thể có 5 dòng mẫu)
+### Tạo bảng `tblCanBo`
 
-### Cách 2 — Để plugin tự tạo bảng
+Có thể chọn **một** trong hai cách:
 
-1. Làm bước 5 (kích hoạt plugin) trước.
-2. Plugin tự tạo bảng khi **Activate**.
-3. Vào **Quản lý CB** → nếu trống thì **Thêm mới** hoặc chạy lại file SQL cách 1.
+#### Cách 1: Chạy file SQL thủ công
 
-**Lưu ý:** Database phải tên **`wordpress`** (hoặc sửa dòng `USE wordpress;` trong file SQL cho đúng tên DB trên máy bạn — xem `wp-config.php` dùng `DB_NAME`).
+1. Mở database `wordpress` trong phpMyAdmin
+2. Chọn tab **SQL**
+3. Mở file:
+
+```text
+quanlicb\sql\tblCanBo.sql
+```
+
+4. Copy toàn bộ nội dung file và dán vào ô SQL
+5. Nhấn **Go / Thực hiện**
+6. Kiểm tra đã có bảng `wp_tblCanBo`
+
+#### Cách 2: Để plugin tự tạo bảng
+
+1. Kích hoạt plugin ở bước 5
+2. Plugin sẽ tự tạo bảng khi Activate
+3. Nếu chưa có dữ liệu thì có thể thêm mới hoặc chạy lại file SQL
 
 ---
 
 ## 5. Kích hoạt plugin WordPress
 
-1. Đăng nhập WordPress admin: **http://localhost/wordpress/wp-admin/**
-2. Menu trái: **Plugins** → **Installed Plugins**
-3. Tìm **Quản lý Cán bộ** → bấm **Activate** / **Kích hoạt**
-4. Menu trái xuất hiện **Quản lý CB** (icon người)
+1. Đăng nhập trang quản trị:
 
-Không thấy plugin → quay lại **mục 3** kiểm tra đường dẫn thư mục.
+```text
+http://localhost/wordpress/wp-admin/
+```
+
+2. Vào **Plugins** -> **Installed Plugins**
+3. Tìm plugin **Quản lý Cán bộ**
+4. Nhấn **Activate / Kích hoạt**
+5. Sau khi kích hoạt, menu **Quản lý CB** sẽ xuất hiện ở thanh bên trái
+
+Nếu không thấy plugin:
+- Kiểm tra lại đường dẫn thư mục plugin
+- Đảm bảo file `quanlicb.php` nằm đúng trong thư mục `quanlicb`
 
 ---
 
-## 6. Dùng plugin (demo báo cáo)
+## 6. Dùng plugin
 
-| Menu | Làm gì |
-|------|--------|
-| **Quản lý CB → Danh sách** | Xem, tìm kiếm, lọc, sửa, xóa |
-| **Quản lý CB → Thêm mới** | Thêm cán bộ |
-| **Quản lý CB → Thống kê & Báo cáo** | Biểu đồ tổng quan, lọc theo kỳ, in báo cáo |
+| Menu | Chức năng |
+|---|---|
+| **Quản lý CB -> Dashboard** | Xem tổng quan dữ liệu cán bộ |
+| **Quản lý CB -> Danh sách** | Xem, tìm kiếm, lọc, sửa, xóa cán bộ |
+| **Quản lý CB -> Thêm mới** | Thêm hồ sơ cán bộ |
+| **Quản lý CB -> Phòng ban** | Quản lý danh mục phòng ban |
+| **Quản lý CB -> Chức vụ** | Quản lý danh mục chức vụ |
+| **Quản lý CB -> Import CSV** | Nhập dữ liệu hàng loạt từ file CSV |
+| **Quản lý CB -> Thống kê & Báo cáo** | Xem biểu đồ, thống kê, in báo cáo |
+| **Quản lý CB -> Nhật ký** | Xem lịch sử thao tác hệ thống |
 
 ### Thử nhanh
 
-1. **Danh sách** → bấm **Thêm mới**
-2. Điền: Mã `CB006`, Họ tên, Ngày sinh, Phòng ban, Hệ số, Lương cơ bản
-3. **Tổng lương** tự tính = Hệ số × Lương cơ bản
-4. **Chọn ảnh** (tùy chọn) → **Thêm**
-5. Về **Danh sách** → thử **Lọc** theo phòng ban
-6. Vào **Thống kê & Báo cáo** xem biểu đồ và lọc theo kỳ
+1. Vào **Danh sách** rồi nhấn **Thêm mới**
+2. Nhập:
+   - Mã cán bộ: `CB006`
+   - Họ tên
+   - Ngày sinh
+   - Phòng ban
+   - Chức vụ
+   - Hệ số lương
+   - Lương cơ bản
+3. Hệ thống tự tính:
+
+```text
+Tổng lương = Hệ số lương × Lương cơ bản
+```
+
+4. Chọn ảnh đại diện nếu cần
+5. Lưu lại và kiểm tra trong danh sách
+6. Thử lọc theo phòng ban hoặc chức vụ
+7. Vào mục **Thống kê & Báo cáo** để xem biểu đồ
 
 ---
 
-## 7. Phân quyền (phần báo cáo "đúng điểm")
+## 7. Phân quyền
 
-### Admin (mặc định — tài khoản cài WordPress)
+### Administrator
 
-- Thêm / sửa / xóa cán bộ
+Tài khoản quản trị WordPress có toàn quyền:
+- Xem dữ liệu
+- Thêm, sửa, xóa cán bộ
+- Quản lý phòng ban, chức vụ
+- Import CSV
+- Xem báo cáo và nhật ký
 
-### Nhân viên — chỉ xem
+### Nhân viên (Quản lý CB)
 
-1. **Users → Add New** tạo user test (vd: `nhanvien` / mật khẩu `123456`)
-2. **Role:** chọn **Nhân viên (Quản lý CB)**
-3. Đăng xuất admin → đăng nhập `nhanvien`
-4. Chỉ thấy **Danh sách** + **Thống kê & Báo cáo**, **không** có **Thêm mới**, **không** có nút Sửa/Xóa
+Role này được plugin tự tạo. Người dùng role này chỉ có quyền:
+- Xem danh sách cán bộ
+- Xem chi tiết cán bộ
+- Xem dashboard
+- Xem thống kê và báo cáo
+
+Không có quyền:
+- Thêm mới
+- Chỉnh sửa
+- Xóa dữ liệu
+- Quản lý danh mục
+- Import dữ liệu
+
+### Tạo tài khoản nhân viên để test
+
+1. Vào **Users -> Add New**
+2. Tạo user mới, ví dụ:
+   - Username: `nhanvien`
+   - Password: `123456`
+3. Chọn role:
+
+```text
+Nhân viên (Quản lý CB)
+```
+
+4. Đăng xuất admin và đăng nhập lại bằng tài khoản nhân viên để kiểm tra quyền
 
 ---
 
-## 8. Phân công nhóm 3 người (gợi ý)
+## 8. Lỗi thường gặp và cách xử lý
 
-| Thành viên | Việc |
-|------------|------|
-| **Người 1** | Cài XAMPP + WordPress + SQL + quay màn hình "cài đặt" |
-| **Người 2** | Viết báo cáo: CRUD, tìm kiếm, validate, SQL minh họa |
-| **Người 3** | Viết báo cáo: phân quyền, thống kê, upload ảnh, phân trang |
-
-**Cả 3** đều phải chạy được trên máy mình (làm theo mục 2 → 7).
-
----
-
-## 9. Lỗi thường gặp — xử lý
-
-| Triệu chứng | Cách sửa |
-|-------------|----------|
-| `localhost` không mở | Bật **Apache** trong XAMPP |
-| WordPress báo lỗi database | Bật **MySQL**; kiểm tra DB `wordpress` đã tạo chưa |
-| Không thấy plugin | Thư mục phải là `plugins\quanlicb\quanlicb.php` |
-| Vào **Quản lý CB** trống / lỗi bảng | Chạy lại `sql\tblCanBo.sql` trong phpMyAdmin |
-| Trang admin không đổi giao diện | **Ctrl + F5** hoặc tắt/bật lại plugin |
-| Không upload được ảnh | Đang nhập bằng tài khoản **Administrator** |
-| Mã cán bộ báo trùng | Đổi mã khác (vd `CB007`) — mỗi mã chỉ 1 lần |
-| Chữ tiếng Việt bị lỗi / thiếu dấu | Lưu file plugin UTF-8 (không BOM); trình duyệt dùng font hỗ trợ tiếng Việt |
+| Triệu chứng | Cách xử lý |
+|---|---|
+| Không mở được `localhost` | Kiểm tra Apache đã bật trong XAMPP chưa |
+| WordPress lỗi kết nối database | Kiểm tra MySQL đã bật và database `wordpress` đã tạo chưa |
+| Không thấy plugin trong admin | Kiểm tra thư mục `wp-content/plugins/quanlicb` và file `quanlicb.php` |
+| Vào `Quản lý CB` bị lỗi bảng | Chạy lại file `sql/tblCanBo.sql` hoặc kích hoạt lại plugin |
+| Không upload được ảnh | Đăng nhập bằng tài khoản Administrator |
+| Mã cán bộ bị trùng | Đổi sang mã khác, mỗi mã chỉ được dùng một lần |
+| Chữ tiếng Việt hiển thị lỗi | Đảm bảo file được lưu UTF-8 |
 
 ---
 
-## 10. Đường dẫn & link nhanh
+## 9. Đường dẫn nhanh
 
-| Mục | Địa chỉ |
-|-----|---------|
-| Trang chủ WordPress | http://localhost/wordpress/ |
-| Trang quản trị | http://localhost/wordpress/wp-admin/ |
-| phpMyAdmin | http://localhost/phpmyadmin |
-| Plugin trên ổ đĩa | `C:\xampp\htdocs\wordpress\wp-content\plugins\quanlicb\` |
+| Mục | Đường dẫn |
+|---|---|
+| Trang chủ WordPress | `http://localhost/wordpress/` |
+| Trang quản trị | `http://localhost/wordpress/wp-admin/` |
+| phpMyAdmin | `http://localhost/phpmyadmin` |
+| Thư mục plugin | `C:\xampp\htdocs\wordpress\wp-content\plugins\quanlicb\` |
 | File SQL | `quanlicb\sql\tblCanBo.sql` |
 
 ---
 
-## 11. Bảng dữ liệu `wp_tblCanBo`
+## 10. Bảng dữ liệu `wp_tblCanBo`
 
 | Cột | Ý nghĩa |
-|-----|---------|
-| MaCB | Mã cán bộ (khóa chính, không trùng) |
-| HoTen | Họ tên |
-| NgaySinh | Ngày sinh |
-| GioiTinh | Nam / Nữ / Khác |
-| PhongBan | Phòng ban |
-| HeSoLuong | Hệ số lương (> 0) |
-| LuongCoBan | Lương cơ bản |
-| TongLuong | **HeSoLuong × LuongCoBan** (tự tính khi lưu) |
-| AnhDaiDien | ID ảnh trong Media Library |
+|---|---|
+| `MaCB` | Mã cán bộ, khóa chính |
+| `HoTen` | Họ tên cán bộ |
+| `NgaySinh` | Ngày sinh |
+| `GioiTinh` | Nam / Nữ / Khác |
+| `PhongBan` | Phòng ban |
+| `ChucVu` | Chức vụ |
+| `HeSoLuong` | Hệ số lương |
+| `LuongCoBan` | Lương cơ bản |
+| `TongLuong` | Tổng lương tự động tính |
+| `AnhDaiDien` | ID ảnh trong Media Library |
 
 ---
 
-## 12. Chức năng (đối chiếu đề bài)
+## 11. Chức năng đối chiếu đề bài
 
-| # | Yêu cầu | Trong plugin |
-|---|---------|--------------|
-| 1 | CRUD | Danh sách / Thêm / Sửa / Xóa |
-| 2 | Tìm kiếm + lọc | Mã, họ tên, phòng ban, giới tính |
+| STT | Yêu cầu | Trong plugin |
+|---|---|---|
+| 1 | CRUD cán bộ | Danh sách / Thêm / Sửa / Xóa |
+| 2 | Tìm kiếm và lọc | Theo mã, họ tên, phòng ban, chức vụ, giới tính, khoảng lương |
 | 3 | Tính lương | `TongLuong = HeSoLuong × LuongCoBan` |
-| 4 | Phân quyền | Admin đủ quyền; Nhân viên chỉ xem |
-| 5 | Upload ảnh | Media Library |
-| 6 | Thống kê & Báo cáo | Tổng quan, lọc kỳ, biểu đồ, in báo cáo |
-| 7 | Phân trang | 10 dòng/trang |
-| 8 | Validate | Mã không trùng, hệ số > 0, ngày sinh hợp lệ |
+| 4 | Phân quyền | Admin toàn quyền, nhân viên chỉ xem |
+| 5 | Upload ảnh | Dùng Media Library |
+| 6 | Thống kê & báo cáo | Dashboard, biểu đồ, lọc theo kỳ, in báo cáo |
+| 7 | Phân trang | 10 dòng mỗi trang |
+| 8 | Validate dữ liệu | Mã không trùng, hệ số > 0, ngày sinh hợp lệ |
+| 9 | Nhật ký thao tác | Ghi create, update, delete, import |
+| 10 | Import CSV | Thêm mới hoặc cập nhật theo `MaCB` |
+
+---
+
+## 12. Cấu trúc code chính
+
+```text
+quanlicb/
+|-- quanlicb.php
+|-- README.md
+|-- sql/
+|   `-- tblCanBo.sql
+|-- includes/
+|   |-- class-database.php
+|   |-- class-canbo.php
+|   |-- class-validator.php
+|   |-- class-phongban.php
+|   |-- class-chucvu.php
+|   |-- class-statistics.php
+|   |-- class-permissions.php
+|   |-- class-audit-log.php
+|   `-- class-seed.php
+|-- admin/
+|   |-- class-admin.php
+|   `-- views/
+|-- assets/
+|   |-- css/
+|   `-- js/
+```
+
+---
+
+## 13. Checklist trước khi nộp bài
+
+- [ ] Apache và MySQL đang chạy
+- [ ] Vào được trang quản trị WordPress
+- [ ] Plugin đã kích hoạt
+- [ ] Có bảng `wp_tblCanBo`
+- [ ] Chạy được thêm, sửa, xóa, tìm kiếm
+- [ ] Có dữ liệu để demo dashboard và báo cáo
+- [ ] Test thử tài khoản nhân viên chỉ xem
+- [ ] Ảnh đại diện và import CSV hoạt động bình thường
+
